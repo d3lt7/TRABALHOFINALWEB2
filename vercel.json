@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".",
+  "functions": {
+    "api/index.js": { "includeFiles": "node_modules/swagger-ui-dist/**" }
+  },
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
+}
