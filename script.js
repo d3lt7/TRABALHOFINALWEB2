@@ -3,7 +3,7 @@
 // Se for aberto via Live Server / file://, aponta para o back-end local.
 const isStandaloneFront = location.protocol === 'file:' ||
     (['localhost', '127.0.0.1'].includes(location.hostname) && location.port !== '3000' && location.port !== '');
-const API_URL = window.TOM_API_URL || (isStandaloneFront ? 'http://localhost:3000/api' : '/api');
+const API_URL = window.TOM_API_URL || (isStandaloneFront ? 'http://localhost:3000/api' : (location.hostname.endsWith('.vercel.app') ? 'https://trabalho-finalweb2.vercel.app/api' : '/api'));
 
 const ROLE_HOME = { ALUNO: 'mainUser.html', PROFESSOR: 'mainProf.html', ADMIN: 'mainAdm.html' };
 const PAGE_ROLES = {
