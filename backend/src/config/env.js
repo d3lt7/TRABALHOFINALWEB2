@@ -15,5 +15,5 @@ export const env = {
   uploadDir: process.env.UPLOAD_DIR || path.resolve('uploads'),
   corsOrigin: process.env.CORS_ORIGIN || '*',
   // Pasta do front-end (raiz do repositório). Servida pelo próprio Express.
-  frontendDir: process.env.FRONTEND_DIR || path.resolve('..'),
+  frontendDir: process.env.VERCEL ? null : (process.env.FRONTEND_DIR || path.resolve('..')),
 };

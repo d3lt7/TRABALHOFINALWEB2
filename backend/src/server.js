@@ -1,11 +1,30 @@
-const app = createApp({ /* igual ao que já está */ });
+import { PrismaClient } from '@prisma/client';
+import { env } from './config/env.js';
+import { createApp } from './app.js';
+import { createUserRepository } from './repositories/userRepository.js';
+import { createInstrumentRepository } from './repositories/instrumentRepository.js';
+import { createLessonRepository } from './repositories/lessonRepository.js';
 
+const prisma = new PrismaClient();
+
+const app = createApp({
+  config: env,
+  repositories: {
+    userRepository: createUserRepository(prisma),
+    instrumentRepository: createInstrumentRepository(prisma),
+    lessonRepository: createLessonRepository(prisma),
+  },
+});
+
+// A Vercel usa o app exportado como função serverless.
 export default app;
 
+// Localmente (e em hosts como Render) sobe o servidor normalmente.
 if (!process.env.VERCEL) {
   const server = app.listen(env.port, () => {
     console.log(`Tom Music rodando em http://localhost:${env.port}  (docs: /api/docs)`);
   });
+
   const shutdown = async () => {
     server.close();
     await prisma.$disconnect();
