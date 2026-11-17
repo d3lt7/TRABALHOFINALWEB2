@@ -495,7 +495,7 @@ nav a.active {
 
 .tab-button {
     padding: var(--spacing-md) var(--spacing-xl);
-    background-color: var(--light-color);
+    background-color: #000000;
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;

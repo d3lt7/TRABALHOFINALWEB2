@@ -1,8 +1,8 @@
 import fs from 'node:fs';
-import rateLimit from 'express-rate-limit';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 
 import { createAuthenticate } from './middlewares/auth.js';
@@ -24,21 +24,6 @@ import { createLessonController } from './controllers/lessonController.js';
  * Monta a aplicação Express.
  * Os repositórios são injetados: em produção vêm do Prisma; nos testes, da memória.
  */
-// Atrás do proxy da Vercel/Render o IP real vem em X-Forwarded-For.
-
-// Limita tentativas de login/cadastro (desligado nos testes).
-if (process.env.NODE_ENV !== 'test') {
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 20,
-    standardHeaders: 'draft-7',
-    legacyHeaders: false,
-    message: { error: 'Muitas tentativas. Tente novamente em alguns minutos.' },
-  });
-  app.use('/api/auth/login', authLimiter);
-  app.use('/api/auth/register', authLimiter);
-}
-
 export function createApp({ repositories, config, now }) {
   const { userRepository, instrumentRepository, lessonRepository } = repositories;
 
@@ -60,6 +45,23 @@ export function createApp({ repositories, config, now }) {
 
   const app = express();
   app.disable('x-powered-by');
+
+  // Atrás do proxy da Vercel/Render o IP real vem em X-Forwarded-For.
+  app.set('trust proxy', 1);
+
+  // Limita tentativas de login/cadastro (desligado nos testes).
+  if (process.env.NODE_ENV !== 'test') {
+    const authLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 20,
+      standardHeaders: 'draft-7',
+      legacyHeaders: false,
+      message: { error: 'Muitas tentativas. Tente novamente em alguns minutos.' },
+    });
+    app.use('/api/auth/login', authLimiter);
+    app.use('/api/auth/register', authLimiter);
+  }
+
   // CSP desativada porque as páginas do front usam scripts inline e Font Awesome via CDN.
   app.use(helmet({
     contentSecurityPolicy: false,
