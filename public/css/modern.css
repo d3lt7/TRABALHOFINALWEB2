@@ -1,0 +1,71 @@
+/* Tom Music — camada de modernização (carregada depois de styles.css) */
+
+:root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+    color-scheme: dark;
+}
+
+/* Tipografia: Inter de verdade, entrelinha confortável, títulos fluidos */
+body {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+h1 { font-size: clamp(2rem, 1.2rem + 3vw, 3rem); letter-spacing: -.02em; }
+h2 { font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); letter-spacing: -.015em; }
+h3 { font-size: clamp(1.15rem, 1rem + .8vw, 1.5rem); }
+p { max-width: 70ch; }
+
+/* Foco visível para quem navega por teclado */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Movimento suave e respeito a "reduzir movimento" */
+a, button, .btn, .card, .time-slot {
+    transition: color .2s var(--ease-out), background-color .2s var(--ease-out),
+                border-color .2s var(--ease-out), transform .2s var(--ease-out),
+                box-shadow .2s var(--ease-out);
+}
+button:not(:disabled):active { transform: translateY(1px) scale(.99); }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Detalhes */
+::selection { background: var(--primary-color); color: #000; }
+img { max-width: 100%; height: auto; }
+button:disabled, .time-slot:disabled { opacity: .5; cursor: not-allowed; }
+.menu-mobile { cursor: pointer; }
+html { scrollbar-color: #3a3a3a #0b0b0b; }
+
+/* Campos de formulário: contraste e estado de erro/foco consistentes */
+input, select, textarea { font-family: inherit; }
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline-offset: 1px;
+    box-shadow: 0 0 0 4px rgba(243, 156, 18, .18);
+}
+
+/* Status extras usados pelos painéis (Passo 4) */
+.badge-concluida { background: rgba(52, 152, 219, .15); color: #5dade2; }
+.badge-cancelada { background: rgba(231, 76, 60, .15); color: #ec7063; }
+
+/* Estado vazio e carregamento (esqueleto) */
+.skeleton {
+    background: linear-gradient(90deg, #161616 25%, #232323 37%, #161616 63%);
+    background-size: 400% 100%;
+    animation: skeleton 1.4s ease infinite;
+    border-radius: 8px;
+    min-height: 1em;
+}
+@keyframes skeleton { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }

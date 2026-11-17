@@ -5,13 +5,16 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
-    "test": "vitest run",
+    "start": "node backend/src/server.js",
+    "dev": "node --watch backend/src/server.js",
+    "test": "vitest run --root backend",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.js",
-    "build": "prisma generate --schema backend/prisma/schema.prisma"
+    "db:seed": "node backend/prisma/seed.js",
+    "build": "prisma generate"
+  },
+  "prisma": {
+    "schema": "backend/prisma/schema.prisma"
   },
   "engines": {
     "node": ">=18"
@@ -19,10 +22,12 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@vercel/blob": "^2.9.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",
     "express": "^4.22.3",
+    "express-rate-limit": "^8.7.4",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.5.0",

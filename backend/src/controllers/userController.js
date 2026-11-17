@@ -1,6 +1,6 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { badRequest } from '../utils/AppError.js';
-
+import { blobEnabled, saveAvatarToBlob } from '../utils/storage.js';
 export function createUserController({ userService }) {
   return {
     list: asyncHandler(async (req, res) => res.json(await userService.list(req.user, req.valid.query))),
@@ -15,9 +15,12 @@ export function createUserController({ userService }) {
       await userService.remove(req.user, req.valid.params.id);
       res.status(204).end();
     }),
-    avatar: asyncHandler(async (req, res) => {
+        avatar: asyncHandler(async (req, res) => {
       if (!req.file) throw badRequest('Envie o arquivo no campo "avatar"');
-      res.json(await userService.setAvatar(req.valid.params.id, req.file.filename));
+      const url = blobEnabled()
+        ? await saveAvatarToBlob(req.file)
+        : `/uploads/${req.file.filename}`;
+      res.json(await userService.setAvatar(req.valid.params.id, url));
     }),
   };
 }

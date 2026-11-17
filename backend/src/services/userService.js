@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { conflict, forbidden, notFound, badRequest } from '../utils/AppError.js';
 import { toPublicUser } from '../utils/user.js';
 import { removeUploadedFile } from '../middlewares/upload.js';
-
+import { removeBlob } from '../utils/storage.js';
 export function createUserService({ userRepository, uploadDir }) {
   const mustFind = async (id) => {
     const user = await userRepository.findById(id);
@@ -51,17 +51,19 @@ export function createUserService({ userRepository, uploadDir }) {
       return toPublicUser(await userRepository.update(id, patch));
     },
 
-    async remove(actor, id) {
+        async remove(actor, id) {
       if (actor.id === id) throw badRequest('Você não pode excluir a própria conta');
       const user = await mustFind(id);
       await userRepository.remove(id);
       removeUploadedFile(uploadDir, user.avatarUrl);
+      await removeBlob(user.avatarUrl);
     },
 
-    async setAvatar(id, filename) {
+    async setAvatar(id, avatarUrl) {
       const previousUrl = (await mustFind(id)).avatarUrl;
-      const updated = await userRepository.update(id, { avatarUrl: `/uploads/${filename}` });
-      removeUploadedFile(uploadDir, previousUrl); // apaga a foto anterior
+      const updated = await userRepository.update(id, { avatarUrl });
+      removeUploadedFile(uploadDir, previousUrl);
+      await removeBlob(previousUrl);
       return toPublicUser(updated);
     },
   };
